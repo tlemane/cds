@@ -1,0 +1,6 @@
+/build/
+.envrc
+/.direnv/
+/.cache/
+/.ccls-cache/
+
