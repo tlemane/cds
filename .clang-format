@@ -1,0 +1,72 @@
+---
+Language: Cpp
+BasedOnStyle: LLVM
+Standard: c++20   # bump to c++23 if your clang-format build supports that value
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 100
+
+# namespace some { \n    class A { ... } \n }  -- contents indented one level.
+NamespaceIndentation: All
+
+# void method() { ... }, if (...) { ... } else if (...) { ... } -- braces
+# attached, else/catch cuddled onto the previous closing brace.
+BreakBeforeBraces: Attach
+
+# class A {
+# public:              <- flush with `class A {`, not indented with members
+#     void method() {}  <- indented one level past the class
+# };
+AccessModifierOffset: -4
+IndentAccessModifiers: false
+
+# switch (c) {
+#     case x: return;          <- short case body stays on one line
+#     case y: {
+#         int a;
+#         a = 1;
+#     } break;
+# }
+IndentCaseLabels: true
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+SpaceBeforeParens: ControlStatements
+SpacesInParentheses: false
+SpaceAfterTemplateKeyword: true
+
+# Don't collapse the deliberate blank lines (after `namespace some {`,
+# after `public:`, inside bodies) down to zero.
+MaxEmptyLinesToKeep: 1
+# `KeepEmptyLinesAtTheStartOfBlock: true` gets you the rest of the way
+# (preserves a blank line immediately after an opening brace specifically)
+# but its syntax changed in clang-format 17, so it's version-dependent:
+# run `clang-format --version` and add ONE of the following.
+#
+#   clang-format < 17:
+# KeepEmptyLinesAtTheStartOfBlock: true
+#
+#   clang-format >= 17:
+# KeepEmptyLines:
+#   AtStartOfBlock: true
+
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+AlignAfterOpenBracket: Align
+BinPackArguments: true
+BinPackParameters: true
+
+# template<typename Bit>
+#     requires bit_writable<Bit>
+# class bit_adapter final : public bit_interface
+RequiresClausePosition: OwnLine
+IndentRequiresClause: true
+BreakBeforeConceptDeclarations: Always
+
+SortIncludes: Never

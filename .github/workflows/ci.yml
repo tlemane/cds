@@ -1,0 +1,151 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    name: Linux ${{ matrix.runner }} / ${{ matrix.compiler }} / ${{ matrix.build_type }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        compiler: [gcc, clang]
+        build_type: [Debug, Release]
+        include:
+          - compiler: gcc
+            cc: gcc-14
+            cxx: g++-14
+            packages: gcc-14 g++-14
+            cxxflags: ""
+          - compiler: clang
+            cc: clang-19
+            cxx: clang++-19
+            packages: clang-19 libc++-19-dev libc++abi-19-dev
+            cxxflags: "-stdlib=libc++"
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ninja-build ${{ matrix.packages }}
+
+      - name: Configure
+        run: >
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DCMAKE_CXX_FLAGS="${{ matrix.cxxflags }}"
+          -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.cxxflags }}"
+          -DCDS_BUILD_TESTS=ON
+          -DCDS_BUILD_EXAMPLES=ON
+          -DCDS_BUILD_BENCHMARKS=OFF
+          -DCDS_WARNINGS_AS_ERRORS=ON
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure --parallel 4 --timeout 600
+
+  sanitizers:
+    name: Linux ASan + UBSan
+    runs-on: ubuntu-24.04
+    env:
+      CC: gcc-14
+      CXX: g++-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ninja-build gcc-14 g++-14
+
+      - name: Configure
+        run: >
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=RelWithDebInfo
+          -DCDS_BUILD_TESTS=ON
+          -DCDS_BUILD_EXAMPLES=ON
+          -DCDS_BUILD_BENCHMARKS=OFF
+          -DCDS_ENABLE_SANITIZERS=ON
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure --parallel 4 --timeout 600
+        env:
+          ASAN_OPTIONS: detect_leaks=1:abort_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+
+  macos:
+    # macos-15 (Apple Silicon): Apple Clang's libc++ has std::print from macOS 15.
+    name: macOS Apple Clang
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: >
+          cmake -S . -B build
+          -DCMAKE_BUILD_TYPE=Release
+          -DCDS_BUILD_TESTS=ON
+          -DCDS_BUILD_EXAMPLES=ON
+          -DCDS_BUILD_BENCHMARKS=OFF
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure --parallel 4 --timeout 600
+
+  windows:
+    name: Windows MSVC
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: >
+          cmake -S . -B build -A x64
+          -DCDS_BUILD_TESTS=ON
+          -DCDS_BUILD_EXAMPLES=ON
+          -DCDS_BUILD_BENCHMARKS=OFF
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure --parallel 4 --timeout 600
+
+  format:
+    name: clang-format
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang-format-19
+
+      - name: Check formatting
+        run: >
+          find include/cds \( -name '*.hpp' -o -name '*.h' \) -print0
+          | xargs -0 clang-format-19 --dry-run --Werror --style=file
