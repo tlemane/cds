@@ -114,4 +114,4 @@ namespace cds::io {
     static_assert(span_source<buffer_source>);
     static_assert(mutable_span_source<mutable_buffer_source>);
 
-}
+} // namespace cds::io

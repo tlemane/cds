@@ -59,4 +59,4 @@ namespace cds {
     // CTAD, e.g. rank_adapter(r.as_view())
     template <rank_structure T> rank_adapter(T) -> rank_adapter<T>;
 
-}
+} // namespace cds

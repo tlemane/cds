@@ -32,4 +32,4 @@ namespace {
             check_one(i);
     }
 
-}
+} // namespace

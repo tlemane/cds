@@ -120,4 +120,4 @@ namespace cds {
 
     template <select_structure T> select_adapter(T) -> select_adapter<T>;
 
-}
+} // namespace cds

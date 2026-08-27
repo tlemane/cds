@@ -45,4 +45,4 @@ namespace cds::detail {
         return std::make_tuple(width, endian, mode);
     }
 
-}
+} // namespace cds::detail

@@ -100,7 +100,7 @@ namespace cds {
             }
         }
 
-    }
+    } // namespace detail
 
     template <typename Word, typename Value, std::uint8_t Width, pack_endian Endian>
     struct bit_packer<Word, Value, Width, Endian, pack_mode::none> {
@@ -968,4 +968,4 @@ namespace cds {
 
     template <typename Word, typename Value> using bp_wrt_rt_rt = bp_rt_rt<Word, Value, 0>;
 
-}
+} // namespace cds

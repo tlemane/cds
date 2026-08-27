@@ -268,7 +268,7 @@ namespace cds::detail {
         std::uint32_t magic;
         std::uint32_t reserved{0};
         std::uint64_t sample_rate;
-        std::uint64_t samples_n;  // 0 if the ones side was not built
+        std::uint64_t samples_n; // 0 if the ones side was not built
         std::uint64_t offsets_n;
         std::uint64_t samples0_n; // 0 if the zeros side was not built
         std::uint64_t offsets0_n;
@@ -282,7 +282,7 @@ namespace cds::detail {
         return (8 - (bytes & 7)) & 7;
     }
 
-}
+} // namespace cds::detail
 
 namespace cds {
 
@@ -646,4 +646,4 @@ namespace cds {
                                                                  o1, s01, o01);
     }
 
-}
+} // namespace cds

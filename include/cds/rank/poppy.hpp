@@ -18,9 +18,9 @@
 namespace cds::detail {
 
     inline constexpr std::size_t poppy_basic_block_bits = 512;
-    inline constexpr std::size_t poppy_lower_block_bits = 2048;    // 4 basic blocks
+    inline constexpr std::size_t poppy_lower_block_bits = 2048; // 4 basic blocks
     inline constexpr std::size_t poppy_basic_blocks_per_lower = 4;
-    inline constexpr std::uint64_t poppy_l2_mask = 0x3FFull;       // 10 bits
+    inline constexpr std::uint64_t poppy_l2_mask = 0x3FFull; // 10 bits
 
     template <typename Word>
     inline constexpr std::size_t poppy_words_per_basic_block =
@@ -251,7 +251,7 @@ namespace cds::detail {
 
     inline constexpr std::uint32_t poppy_magic = io::cds_magic(io::format_id::rank_poppy);
 
-}
+} // namespace cds::detail
 
 namespace cds {
 

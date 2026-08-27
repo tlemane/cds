@@ -126,8 +126,7 @@ namespace cds::detail {
         }
 
         // dense
-        const std::size_t subblock =
-            r / SubblockSize; // global index
+        const std::size_t subblock = r / SubblockSize; // global index
         const auto start_pos = static_cast<std::size_t>(block_pos) + arr.subblocks[subblock];
         const std::size_t need = r % SubblockSize;
         if (need == 0)
@@ -345,7 +344,7 @@ namespace cds::detail {
         return true;
     }
 
-}
+} // namespace cds::detail
 
 namespace cds {
 
@@ -760,4 +759,4 @@ namespace cds {
                                                                         zeros());
     }
 
-}
+} // namespace cds

@@ -105,4 +105,4 @@ namespace cds::io {
     static_assert(byte_sink<file_sink>);
     static_assert(byte_source<file_source>);
 
-}
+} // namespace cds::io

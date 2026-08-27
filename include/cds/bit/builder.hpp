@@ -226,4 +226,4 @@ namespace cds {
         builder.m_size = 0;
     }
 
-}
+} // namespace cds

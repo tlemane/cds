@@ -99,4 +99,4 @@ namespace cds {
 
     template <typename Word> using bit_ops_rt = bit_ops<Word, pack_endian::rt>;
 
-}
+} // namespace cds

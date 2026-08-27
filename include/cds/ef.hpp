@@ -31,7 +31,7 @@ namespace cds {
     template <typename T, typename Source>
     concept select01_over_source = select_over_source<T, Source> && select0_structure<T>;
 
-}
+} // namespace cds
 
 namespace cds::detail {
 
@@ -407,7 +407,7 @@ namespace cds::detail {
         }
     };
 
-}
+} // namespace cds::detail
 
 namespace cds {
 
@@ -623,8 +623,7 @@ namespace cds {
                 const std::size_t pos = static_cast<std::size_t>(values[i] >> m_low_width) + i;
                 hb.set_bit(pos);
             }
-            m_high =
-                high_bits_type(std::move(hb)); // steal the builder buffer
+            m_high = high_bits_type(std::move(hb)); // steal the builder buffer
 
             m_select.emplace(m_high);
             m_back = values[m_size - 1];
@@ -745,4 +744,4 @@ namespace cds {
             m_universe, static_cast<std::uint8_t>(m_low_width), m_back);
     }
 
-}
+} // namespace cds

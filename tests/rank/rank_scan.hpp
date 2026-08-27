@@ -61,7 +61,7 @@ namespace {
         run_rank_scan_all_layouts<Word>(2000, 0.98, seed_base + 12);
     }
 
-}
+} // namespace
 
 TEST_CASE("rank/rank_scan") {
     SUBCASE("Word = uint64_t") {

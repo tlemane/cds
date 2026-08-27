@@ -79,7 +79,7 @@ namespace cds {
         }
     };
 
-}
+} // namespace cds
 
 namespace cds::literals {
 
@@ -99,4 +99,4 @@ namespace cds::literals {
         return unsafe<std::uint64_t>(static_cast<std::uint64_t>(value));
     }
 
-}
+} // namespace cds::literals

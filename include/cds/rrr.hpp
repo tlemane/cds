@@ -390,7 +390,7 @@ namespace cds::detail {
         }
     };
 
-}
+} // namespace cds::detail
 
 namespace cds {
 
@@ -714,4 +714,4 @@ namespace cds {
                                                m_nblocks, m_sample_rank.size());
     }
 
-}
+} // namespace cds

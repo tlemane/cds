@@ -16,4 +16,4 @@ namespace {
         return std::filesystem::temp_directory_path() / name;
     }
 
-}
+} // namespace

@@ -40,7 +40,7 @@ namespace {
         }
     }
 
-}
+} // namespace
 
 TEST_CASE("core/common — bit masks") {
     SUBCASE("Type = uint64_t") {

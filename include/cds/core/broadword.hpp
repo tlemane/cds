@@ -74,7 +74,8 @@ namespace cds::broadword {
             const std::uint64_t count8 = (count4 + (count4 >> 4)) & (ones / 0x11);
             const std::uint64_t count16 = (count8 + (count8 >> 8)) & (ones / 0x101);
 
-            std::uint64_t need = static_cast<std::uint64_t>(std::popcount(w)) - static_cast<std::uint64_t>(r);
+            std::uint64_t need =
+                static_cast<std::uint64_t>(std::popcount(w)) - static_cast<std::uint64_t>(r);
             std::uint64_t pos = 64;
             std::uint64_t chunk;
 

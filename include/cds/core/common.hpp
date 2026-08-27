@@ -53,4 +53,4 @@ namespace cds {
         return ~lsb_mask<Type>(digits<Type> - masked);
     }
 
-}
+} // namespace cds

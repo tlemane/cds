@@ -115,7 +115,7 @@ namespace cds::detail {
         }
     };
 
-}
+} // namespace cds::detail
 
 namespace cds {
 
@@ -313,4 +313,4 @@ namespace cds {
         std::size_t m_bits = 0;
     };
 
-}
+} // namespace cds

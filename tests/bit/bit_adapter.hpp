@@ -14,7 +14,7 @@ namespace {
     using adapter_word = std::uint64_t;
     inline constexpr cds::pack_endian adapter_endian = cds::pack_endian::lsb;
 
-}
+} // namespace
 
 TEST_CASE("bit/bit_dynamic_adapter") {
     using bv_t = cds::bit_vector<adapter_word, adapter_endian>;

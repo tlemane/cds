@@ -488,4 +488,4 @@ namespace cds {
                   rhs) noexcept(noexcept(lhs.swap(rhs))) {
         lhs.swap(rhs);
     }
-}
+} // namespace cds

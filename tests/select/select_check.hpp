@@ -31,4 +31,4 @@ namespace {
             check_one(r);
     }
 
-}
+} // namespace

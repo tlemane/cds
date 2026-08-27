@@ -44,7 +44,7 @@ namespace cds {
         };
     }
 
-}
+} // namespace cds
 
 #if defined(NDEBUG) && !defined(CDS_FORCE_ASSERT)
 #define CDS_ASSERT(expression, message, ...) ((void)0)

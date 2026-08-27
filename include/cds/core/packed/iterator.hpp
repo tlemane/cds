@@ -123,4 +123,4 @@ namespace cds {
     template <typename Word, typename Value, std::uint8_t Width, pack_endian Endian, pack_mode Mode>
     using const_packed_iterator_t = packed_iterator<Word, Value, Width, Endian, Mode, true>;
 
-}
+} // namespace cds

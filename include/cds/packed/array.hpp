@@ -258,4 +258,4 @@ namespace cds {
         std::size_t m_size{0};
     };
 
-}
+} // namespace cds

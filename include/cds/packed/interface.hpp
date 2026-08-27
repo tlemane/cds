@@ -188,4 +188,4 @@ namespace cds {
         T m_packed;
     };
 
-}
+} // namespace cds

@@ -85,7 +85,7 @@ namespace {
         run_bit_view_all_layouts<Word>(200, 0.98, seed_base + 9);
     }
 
-}
+} // namespace
 
 TEST_CASE("bit/bit_view") {
     SUBCASE("Word = uint64_t") {

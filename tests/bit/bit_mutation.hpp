@@ -88,7 +88,7 @@ namespace {
         run_bit_mutation_case<Word, pack_endian::msb>(n);
     }
 
-}
+} // namespace
 
 TEST_CASE("bit/bit_mutation") {
     SUBCASE("Word = uint64_t") {

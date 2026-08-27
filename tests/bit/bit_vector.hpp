@@ -130,7 +130,7 @@ namespace {
         run_bit_vector_all_layouts<Word>(300, 0.98, seed_base + 11);
     }
 
-}
+} // namespace
 
 TEST_CASE("bit/bit_vector") {
     SUBCASE("Word = uint64_t") {

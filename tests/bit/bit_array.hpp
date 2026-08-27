@@ -83,7 +83,7 @@ namespace {
         run_bit_array_all_layouts<Word, 256>(256, 0.5, seed_base + 6);
     }
 
-}
+} // namespace
 
 TEST_CASE("bit/bit_array") {
     SUBCASE("Word = uint64_t") {

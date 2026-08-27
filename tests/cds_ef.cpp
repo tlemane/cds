@@ -181,7 +181,7 @@ namespace {
         }
     }
 
-}
+} // namespace
 
 TEST_CASE("select/ef") {
     SUBCASE("hand-verified reference sequence — nge/ple/locate") {

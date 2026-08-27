@@ -78,4 +78,4 @@ namespace cds {
         }
     };
 
-}
+} // namespace cds

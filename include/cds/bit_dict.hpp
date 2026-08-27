@@ -177,4 +177,4 @@ namespace cds {
     using bit_dict_default = bit_dict<bit_vector<Word, Endian>, rank9<bit_vector<Word, Endian>>,
                                       darray<bit_vector<Word, Endian>, select_target::both>>;
 
-}
+} // namespace cds

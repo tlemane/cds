@@ -86,7 +86,7 @@ namespace {
         run_bit_builder_dynamic_case<Word, pack_endian::msb>(seed + 30);
     }
 
-}
+} // namespace
 
 TEST_CASE("bit/bit_builder") {
     SUBCASE("Word = uint64_t") {

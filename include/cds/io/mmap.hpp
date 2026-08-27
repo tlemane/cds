@@ -30,7 +30,7 @@ namespace cds::io {
     enum class mmap_sync { async, sync, invalidate };
     enum class mmap_mode { read_only, read_write };
 
-}
+} // namespace cds::io
 
 #if defined(_WIN32)
 
@@ -285,7 +285,7 @@ namespace cds::io::detail {
         return {};
     }
 
-}
+} // namespace cds::io::detail
 
 #endif
 
@@ -517,4 +517,4 @@ namespace cds::io {
 
     template <typename T> using ommap = mmap_file<T, mmap_mode::read_write>;
 
-}
+} // namespace cds::io

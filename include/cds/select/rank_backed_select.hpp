@@ -108,4 +108,4 @@ namespace cds {
         SelectT m_select;
     };
 
-}
+} // namespace cds

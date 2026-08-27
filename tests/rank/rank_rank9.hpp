@@ -93,7 +93,7 @@ namespace {
         run_rank9_all_layouts<Word>(sb_bits * 5 + 31, 0.98, seed_base + 16);
     }
 
-}
+} // namespace
 
 TEST_CASE("rank/rank9") {
     SUBCASE("Word = uint64_t") {

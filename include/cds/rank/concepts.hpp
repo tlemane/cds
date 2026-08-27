@@ -30,4 +30,4 @@ namespace cds {
         { t.size() } -> std::convertible_to<std::size_t>;
     };
 
-}
+} // namespace cds

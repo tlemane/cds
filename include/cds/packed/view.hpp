@@ -210,8 +210,7 @@ namespace cds {
             const std::size_t nw = to_nb_words<word_type>(view_size, width, mode);
             const std::size_t byte_len = nw * sizeof(word_type);
 
-            const std::span<std::byte> bytes = source.view_mut(
-                byte_len);
+            const std::span<std::byte> bytes = source.view_mut(byte_len);
             if (bytes.size() != byte_len)
                 return std::unexpected(io::load_error::io_failure);
 
@@ -252,4 +251,4 @@ namespace cds {
     template <typename Word, typename Value, std::uint8_t Width, pack_endian Endian, pack_mode Mode>
     using const_packed_view = packed_view_impl<Word, Value, Width, Endian, Mode, true>;
 
-}
+} // namespace cds

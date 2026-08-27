@@ -121,7 +121,7 @@ namespace {
         run_darray_all_layouts<Word>(3000, 3000ull * 20, seed_base + 7);
     }
 
-}
+} // namespace
 
 TEST_CASE("select/darray") {
     SUBCASE("Word = uint64_t") {

@@ -7,7 +7,7 @@ namespace cds {
 
     namespace detail {
         struct empty_storage {};
-    }
+    } // namespace detail
 
     template <typename T>
     concept select1_structure = requires(const T& t, std::size_t r) {
@@ -25,4 +25,4 @@ namespace cds {
         { t.select1(r) } -> std::convertible_to<std::size_t>;
     };
 
-}
+} // namespace cds

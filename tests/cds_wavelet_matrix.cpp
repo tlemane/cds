@@ -32,7 +32,7 @@ namespace {
         }
     };
 
-}
+} // namespace
 
 TEST_CASE("wavelet_matrix access, fixed 3-bit alphabet") {
     std::vector<u64> v = {5, 1, 7, 0, 3, 3, 6, 2, 5, 1};

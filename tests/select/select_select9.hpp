@@ -101,7 +101,7 @@ namespace {
         run_select9_all_layouts<Word>(200000, 0.98, seed_base + 11);
     }
 
-}
+} // namespace
 
 TEST_CASE("select/select9") {
     SUBCASE("Word = uint64_t") {

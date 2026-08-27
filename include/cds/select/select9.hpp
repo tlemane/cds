@@ -559,4 +559,4 @@ namespace cds {
             return select9_view<Source, Target>(m_data, m_size, m_superblocks, m_hints, m_hints0);
     }
 
-}
+} // namespace cds

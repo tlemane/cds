@@ -169,4 +169,4 @@ namespace cds::io {
                                   static_cast<std::size_t>(n));
     }
 
-}
+} // namespace cds::io

@@ -123,7 +123,7 @@ namespace {
         run_poppy_all_layouts<Word, small_upper>(small_upper * 3, 0.98, seed_base + 26);
     }
 
-}
+} // namespace
 
 TEST_CASE("rank/rank_poppy") {
     SUBCASE("Word = uint64_t") {

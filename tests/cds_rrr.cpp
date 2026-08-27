@@ -30,7 +30,7 @@ namespace {
             }
     }
 
-}
+} // namespace
 
 TEST_CASE("rrr combinadic decode helpers round-trip vs naive") {
     constexpr std::size_t B = 63;

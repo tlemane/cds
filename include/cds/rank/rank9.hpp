@@ -134,7 +134,7 @@ namespace cds::detail {
 
     inline constexpr std::uint32_t rank9_magic = io::cds_magic(io::format_id::rank9);
 
-}
+} // namespace cds::detail
 
 namespace cds {
 
@@ -347,4 +347,4 @@ namespace cds {
         return rank9_view<Source>(m_data, m_size, m_superblocks);
     }
 
-}
+} // namespace cds

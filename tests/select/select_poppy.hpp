@@ -119,7 +119,7 @@ namespace {
         run_select_poppy_all_layouts<Word, small_upper>(small_upper * 4, 0.98, seed_base + 23);
     }
 
-}
+} // namespace
 
 TEST_CASE("select/select_poppy") {
     SUBCASE("Word = uint64_t") {

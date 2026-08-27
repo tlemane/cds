@@ -135,7 +135,7 @@ namespace {
     static_assert(bw::select_in_word<pack_endian::lsb>(std::uint32_t{0b1010}, 1) == 3);
     static_assert(bw::select_in_word<pack_endian::msb>(std::uint64_t{1} << 63, 0) == 0);
 
-}
+} // namespace
 
 TEST_CASE("core/broadword") {
     SUBCASE("Word = uint64_t") {

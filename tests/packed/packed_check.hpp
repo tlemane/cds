@@ -175,4 +175,4 @@ namespace {
         view_sweep_width<Word, 64>(n);
     }
 
-}
+} // namespace
