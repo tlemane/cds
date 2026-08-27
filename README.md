@@ -37,8 +37,8 @@ A few choices shape the library.
   or your own.
 
 - **Owning and viewable.** Each structure has an owning type and a zero-copy
-  `_view`, and serializes to a versioned format (in-memory buffer, file, or
-  `mmap`) that the view can bind to without copying.
+  `_view`, and serializes to a versioned format that the view can bind to
+  without copying. (in-memory buffer, file, or `mmap`).
 
 
 ---
@@ -54,8 +54,6 @@ A few choices shape the library.
 - [Tests & benchmarks](#tests--benchmarks)
 - [Continuous integration](#continuous-integration)
 - [Performance](#performance)
-
----
 
 ## Content
 
@@ -113,7 +111,7 @@ built, `both` roughly doubles a one-sided index.
 
 - A **C++23** compiler
 - **CMake ≥ 3.28** to consume it as a package (optional).
-- No third-party dependencies. (The benchmarks optionally fetch `xxsds/sdsl-lite` for comparison.)
+- No third-party dependencies.
 
 CI builds and tests on **Linux** (x86-64 and ARM64) with **GCC 14** and **Clang 19**
 (libc++), on **macOS** (Apple Silicon) with **Apple Clang**, and on **Windows** with
@@ -140,6 +138,12 @@ FetchContent_MakeAvailable(cds)
 target_link_libraries(myapp PRIVATE cds::cds)
 ```
 
+```cmake
+# find_package
+find_package(cds 0.1 REQUIRED)     # optional version (SameMajorVersion compatibility)
+target_link_libraries(myapp PRIVATE cds::cds)
+```
+
 Linking `cds::cds` sets the C++23 requirement and the include path.
 
 ## Quick start
@@ -155,7 +159,7 @@ Linking `cds::cds` sets the C++23 requirement and the include path.
 #include <vector>
 
 using u64 = std::uint64_t;
-using bv_t = cds::bit_vector<u64, cds::pack_endian::lsb, cds::pack_mode::dense>;
+using bv_t = cds::bit_vector<u64, cds::pack_endian::lsb>;
 
 int main() {
     // ---- bit vector ----
@@ -176,13 +180,13 @@ int main() {
     std::size_t p0 = sel.select0(10);   // position of the 10th zero
 
     // ---- Elias–Fano ----
-    std::vector<u64> values = {1, 3, 3, 7, 12, 30, 31};
+    std::vector<u64> values = {5, 8, 8, 20, 50, 51, 90, 200, 512};
     cds::ef<> ef(values);
-    u64  v    = ef[4];             // -> 12
-    auto succ = ef.nge(8);         // next value >= 8  -> {pos=4, val=12}
-    auto pred = ef.ple(8);         // prev value <= 8  -> {pos=3, val=7}
+    u64  v    = ef[4];             // -> 50
+    auto succ = ef.nge(9);         // -> {pos=3, val=20}
+    auto pred = ef.ple(9);         // -> {pos=2, val=8}
 
-    for (u64 x : ef) { /* fast sequential decode */
+    for (u64 x : ef) { // fast sequential decode
         (void)x;
     }
 
@@ -285,13 +289,6 @@ The owning type builds and holds its arrays. The `_view` binds, without copying,
 into a buffer you supply (e.g. an `mmap`'d file). Both answer the same
 queries. See [Serialization](#serialization--persistence).
 
-Every owning structure also has an **`as_view()`** method returning its `_view`
-bound to that object's own in-memory storage, with no serialization and no copy.
-The view is a lightweight handle (spans and pointers), so one backend can cheaply
-feed many consumers at once, for example a `rank_interface` and a
-`select_interface` sharing a single compressed `rrr`. The backend must outlive
-any view taken from it. See [`adv_as_view.cpp`](examples/adv_as_view.cpp).
-
 ### The `unsafe` fast write path
 
 Packed writes normally clear the target bits. When you
@@ -332,38 +329,42 @@ they are interchangeable wherever a generic `rank1_structure` /
 ### Runtime polymorphism
 
 Every structure is a static, zero-overhead template with no virtual calls. When
-you need to choose an implementation at runtime, hold heterogeneous structures
-together, or hide the concrete type behind an ABI boundary, each family also ships
+you need to choose an implementation at runtime, each family structure also ships
 an abstract interface and a generic adapter that wraps any conforming structure
 behind it (`cds/*/interface.hpp`):
 
 | family | interface(s) | adapter(s) |
 | --- | --- | --- |
 | rank | `rank_interface` (`rank1`/`rank0`/`size`) | `rank_adapter<T>` |
-| select | `select1_interface`, `select0_interface` | `select1_adapter<T>`, `select0_adapter<T>` |
+| select | `select1_interface`, `select0_interface`, `select_interface` | `select1_adapter<T>`, `select0_adapter<T>`, `select_adapter<T>` |
 | packed | `packed_const_interface<V>`, `packed_interface<V>`, `packed_dynamic_interface<V>` | `const_packed_adapter<T>`, `packed_adapter<T>`, `packed_dynamic_adapter<T>` |
 | bit | `bit_const_interface`, `bit_interface`, `bit_dynamic_interface` | `const_bit_adapter<T>`, `bit_adapter<T>`, `bit_dynamic_adapter<T>` |
 
-The adapter forwards constructor arguments to the wrapped type and answers the
-interface's virtual methods by delegating to it, so any concrete structure is
-usable behind one pointer type:
 
 ```cpp
 #include <cds/rank/interface.hpp>
 #include <memory>
 
 // choose the rank implementation at runtime, behind a single pointer type:
-std::unique_ptr<cds::rank_interface> idx =
-    use_compressed
-        ? std::unique_ptr<cds::rank_interface>{std::make_unique<cds::rank_adapter<cds::rrr<>>>(bv)}
-        : std::unique_ptr<cds::rank_interface>{std::make_unique<cds::rank_adapter<cds::rank9<bv_t>>>(bv)};
 
-std::size_t r = idx->rank1(300);   // one virtual call, whichever impl was chosen
+cds::rank_interface* ri =
+    use_compressed ? new cds::rank_adapter<cds::rrr<>>(bv)
+                   : new cds::rank_adapter<cds::rank9<bv_t>>(bv);
+
+std::size_t r = idx->rank1(300);
+
+delete ri;
 ```
 
 Adapters are `final` and non-copyable/non-movable. The usual lifetime rule still applies
 to source-backed indexes: a `rank_adapter<rank9<…>>` keeps a pointer into its `bit_source`, while a
 self-contained `rank_adapter<rrr<…>>` copies the data and has no such coupling.
+
+Every owning structure also has an **`as_view()`** method returning its `_view`
+counterpart. The view is a lightweight handle (spans and pointers), so one backend can cheaply
+feed many consumers at once, for example a `rank_interface` and a
+`select_interface` sharing a single compressed `rrr`. The backend must outlive
+any view taken from it. See [`adv_as_view.cpp`](examples/adv_as_view.cpp).
 
 ---
 
@@ -381,14 +382,9 @@ concept span_source = byte_source && /* s.view(n) -> span<const std::byte> */;
 
 Each blob starts with a small **version header** so loads are checked for compatibility.
 
-The layout is **alignment-aware**. Every header is sized to a multiple of 8 bytes, and each
-variable-length section (the packed word arrays, and `darray`'s `int64` / `uint64`
-inventories) is padded so the next one starts on an 8-byte boundary. A `_view` therefore
-binds directly onto the bytes `save()` wrote, whether that is a memory buffer or an `mmap`,
-and reads every word in place through a correctly aligned pointer: no copy, no misaligned
-access. The only requirement is that the buffer or mapping you pass to `load()` starts
-8-byte aligned, which `mmap` pages and standard allocators already satisfy. CI runs the
-suite under UBSan, which enforces this.
+The layout is **alignment-aware**. A `_view` binds directly onto the bytes `save()` wrote,
+whether that is a memory buffer or an `mmap`, and reads every word in place through a correctly
+aligned pointer: no copy, no misaligned access. CI runs the suite under UBSan to guard this.
 
 ### Back-ends (`cds/io/`)
 
@@ -442,17 +438,17 @@ The `cds-perf` binary tries to give you a performance summary of each
 - `bench_bv`: `bit_vector` operations.
 - `bench_rank`: rank structures (`rank9`, `rank_poppy`, `rank_scan`).
 - `bench_select`: select structures (`darray`, `select9`, `select_poppy`).
-- `bench_ef`: Elias–Fano (`ef`).
+- `bench_sdsl_rank`: `cds` rank structures vs `sdsl` ones
+- `bench_sdsl_select`: `cds` select structures vs `sdsl` ones
 - `bench_sdsl_packed`: `packed_vector` vs `sdsl::int_vector`.
 - `bench_sdsl_bv`: `bit_vector` vs `sdsl::bit_vector`.
 - `bench_sdsl_ef`: `ef` vs `sdsl::sd_vector`.
 - `bench_sdsl_rrr`: `rrr` vs `sdsl::rrr_vector`.
+- `bench_sdsl_wavelet`: `wavelet_matrix` vs `sdsl::wm_int`
 
 ## Continuous integration
 
-Every push to `main` and every pull request runs the
-[CI workflow](.github/workflows/ci.yml). Tests
-run through CTest (doctest) and every example is compiled.
+The test suite runs on the following platform and compilers:
 
 | Job | OS | Toolchain | Build types |
 | --- | --- | --- | --- |
@@ -461,17 +457,14 @@ run through CTest (doctest) and every example is compiled.
 | Windows | Windows Server 2022 | MSVC (Visual Studio 17 2022) | Release |
 | Sanitizers (ASan/UBSan) | Ubuntu 24.04 | GCC 14 | RelWithDebInfo |
 
-- **Debug and Release both build and test.**
 - **Sanitizers** run the whole suite under AddressSanitizer and UndefinedBehaviorSanitizer,
-  including strict alignment checks. UBSan is what a zero-copy `_view` has to satisfy: its
-  words are `reinterpret_cast` in place, so every serialized section is padded to an 8-byte
-  boundary and the sanitizer job guards that invariant.
+  including strict alignment checks. UBSan is what a zero-copy `_view` has to satisfy
 
 ## Performance
 
 Numbers below are from one `cds-perf` run (see [Tests & benchmarks](#tests--benchmarks)),
 each structure against its closest `sdsl-lite` equivalent. This is a snapshot from a single
-machine, not a spec: run `cds-perf` yourself for numbers that apply to your hardware. Every
+machine: run `cds-perf` yourself for numbers that apply to your hardware. Every
 `x` figure is `cds / sdsl` throughput, so `> 1.00x` means cds is faster.
 
 **Setup.** Intel Core Ultra 7 165H (L1d 48 KiB, L2 2 MiB, L3 24 MiB), GCC 15.3 at
@@ -480,8 +473,7 @@ machine, not a spec: run `cds-perf` yourself for numbers that apply to your hard
 Rank and select also show `inst/op` (retired instructions per operation).
 `packed_vector`, `bit_vector`, `ef`, `rrr` and `wavelet_matrix` use `n = 1,000,000`. `rank` and
 `select` are shown at two working-set sizes, **cached** (index over 200,000 bits, ~24 KiB,
-L1-resident) and **at-scale** (1,000,000 bits, ~122 KiB, L2), because throughput depends on
-where the structure lives.
+L1-resident) and **at-scale** (1,000,000 bits, ~122 KiB, L2).
 
 ### packed_vector vs `sdsl::int_vector<W>`
 
@@ -636,7 +628,7 @@ index), and `poppy+selpop` (shares a poppy index, most compact). Table is the 8-
 
 | alphabet | sdsl `wm_int` | `r9+darray` | `r9+select9` | `poppy+selpop` |
 | --- | --- | --- | --- | --- |
-| DNA 2-bit | 3.14 | 3.63 (0.86x) | 2.52 (**1.25x**) | 2.07 (**1.51x**) |
+| 2-bit | 3.14 | 3.63 (0.86x) | 2.52 (**1.25x**) | 2.07 (**1.51x**) |
 | 8-bit | 12.05 | 14.50 (0.83x) | 10.07 (**1.20x**) | 8.29 (**1.45x**) |
 | 16-bit | 23.92 | 29.01 (0.82x) | 20.13 (**1.19x**) | 16.57 (**1.44x**) |
 
