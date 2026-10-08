@@ -30,6 +30,8 @@ namespace cds {
         using iterator_category = std::random_access_iterator_tag;
         using iterator_concept = std::random_access_iterator_tag;
 
+        constexpr packed_iterator() noexcept : packed_iterator(nullptr, 0) {}
+
         constexpr packed_iterator(pointer data, difference_type index, std::uint8_t width = Width,
                                   pack_endian endian = Endian, pack_mode mode = Mode) noexcept
             : storage_type(width, endian, mode), m_data(data), m_index(index) {}
