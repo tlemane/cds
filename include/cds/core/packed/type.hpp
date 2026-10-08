@@ -65,8 +65,10 @@ namespace cds {
     template <typename T> unsafe(T) -> unsafe<T>;
 
     template <typename T>
-        requires std::unsigned_integral<T>
-    struct packed_traits {
+    struct packed_traits;
+
+    template <std::unsigned_integral T>
+    struct packed_traits<T> {
         using value_type = T;
         using packed_type = T;
 
@@ -77,6 +79,13 @@ namespace cds {
         static constexpr value_type from(packed_type v) noexcept {
             return v;
         }
+    };
+
+    template <typename T>
+    concept packable = requires(T v, typename packed_traits<T>::packed_type p) {
+        requires std::unsigned_integral<typename packed_traits<T>::packed_type>;
+        { packed_traits<T>::to(v) } -> std::same_as<typename packed_traits<T>::packed_type>;
+        { packed_traits<T>::from(p) } -> std::same_as<T>;
     };
 
 } // namespace cds
