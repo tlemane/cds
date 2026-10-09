@@ -420,6 +420,14 @@ namespace cds {
             m_size = new_size;
         }
 
+        template <typename Op>
+        void resize_and_overwrite(std::size_t n, Op op) {
+            ensure_capacity_for(n);
+            const std::size_t new_size = std::move(op)(m_data, n);
+            CDS_ASSERT(new_size <= n, "resize_and_overwrite: op returned a size larger than n");
+            m_size = new_size;
+        }
+
         void clear() noexcept {
             m_size = 0;
         }
